@@ -1,5 +1,5 @@
 <?php
-namespace MultiFileUpload\Model\Table;
+namespace MultipleFileUpload\Model\Table;
 
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;

@@ -1,5 +1,5 @@
 <?php
-namespace MultiFileUpload\Model\Entity;
+namespace MultipleFileUpload\Model\Entity;
 
 use Cake\ORM\Entity;
 
@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  */
 class File extends Entity
 {
+	protected $_virtual = ['size_mb'];
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -34,4 +35,10 @@ class File extends Entity
         'modified' => true,
         'project' => true
     ];
+
+    protected function _getSizeMb()
+    {
+		$sizeMB = $this->size / (1024 * 1024);
+        return $sizeMB < 1 ? number_format(round($this->size / 1024, 2)).' KB' : number_format(round($sizeMB), 2).' MB';
+    }
 }

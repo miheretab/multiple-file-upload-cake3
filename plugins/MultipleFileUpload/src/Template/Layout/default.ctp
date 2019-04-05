@@ -9,7 +9,11 @@
     <?= $this->Html->css('MultipleFileUpload.main') ?>
 
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,400">
-	<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+		var base = '<?= $this->Url->build('/multiple-file-upload/'); ?>';
+		(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);
+	</script>
 	<?= $this->Html->css('MultipleFileUpload.style') ?>
 
     <?= $this->fetch('meta') ?>

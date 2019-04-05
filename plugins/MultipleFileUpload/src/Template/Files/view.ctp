@@ -13,3 +13,26 @@
 	<div class="box__error">Error! <span></span>. <a href="<?= $this->Url->build('/multiple-file-upload/files/view/'.$projectId); ?>" class="box__restart" role="button">Try again!</a></div>
 	<input type="hidden" name="ajax" value="1">
 </form>
+
+<div id="files">
+	<?php echo $this->Element('view_files'); ?>
+</div>
+
+<script>
+	$(document).ready(function(){
+		$('a.remove').on('click', function(e){
+			e.preventDefault();
+			var url = $(this).attr('href');
+			$.ajax({
+				url: url,
+				method: 'GET',
+				success: function(resp) {
+					console.log(resp);
+					if(resp.success) {
+						$('#file-'+resp.id).remove();
+					}
+				}
+			});
+		});
+	});
+</script>

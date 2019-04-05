@@ -7,10 +7,19 @@ use Cake\Filesystem\Folder;
 
 class FilesController extends AppController
 {
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('RequestHandler');
+    }
+
     public function view($projectId) {
-		$this->paginate['conditions'] = ['project_id' => $projectId];
-		$files = $this->paginate($this->Files);
+		$files = $this->Files->find('all', ['conditions' => ['project_id' => $projectId], 'order' => ['created' => 'DESC']]);
 		$this->set(compact('files', 'projectId'));
+		//$this->set('_serialize', ['files']);
+		if($this->request->is('Ajax')) {
+			$this->render('view_files');
+		}
     }
 
     public function upload($projectId) {
@@ -44,9 +53,9 @@ class FilesController extends AppController
 				}
 			}
 			if(!empty($errors)) {
-				return $this->response->withType('application/json')->withStringBody(json_encode(['error' => $errors]));
+				return $this->response->withType('application/json')->withStringBody(json_encode(['error' => $errors, 'projectId' => $projectId]));
 			} else {
-				return $this->response->withType('application/json')->withStringBody(json_encode(['success' => true, 'message' => 'Successfully Uploaded']));
+				return $this->response->withType('application/json')->withStringBody(json_encode(['success' => true, 'message' => 'Successfully Uploaded', 'projectId' => $projectId]));
 			}
 		
 		}
@@ -55,7 +64,7 @@ class FilesController extends AppController
     public function download($id) {
 		$this->autoRender = false;
 		$projectFile = $this->Files->get($id);
-		$filePath = ROOT .'files'. DS . $id . DS . $projectFile->name;
+		$filePath = ROOT .DS . 'files'. DS . $projectFile->project_id . DS . $projectFile->name;
 		if($projectFile && file_exists($filePath)) {
 			$this->response->file($filePath, ['download'=> true, 'name'=> $projectFile->name]);
 		}
@@ -64,10 +73,15 @@ class FilesController extends AppController
     public function remove($id) {
 		$this->autoRender = false;
         $projectFile = $this->Files->get($id);
+		$filePath = ROOT . DS . 'files' . DS . $projectFile->project_id . DS. $projectFile->name;
 		if($projectFile) {
-			unlink(ROOT . 'files' . DS . $id . DS. $projectFile->name);
+			if(file_exists($filePath)) {
+				unlink($filePath);
+			}
 			if ($this->Files->delete($projectFile)) {
+				return $this->response->withType('application/json')->withStringBody(json_encode(['success' => true, 'message' => 'Successfully Removed', 'id' => $id]));
 			}
 		}
+		return $this->response->withType('application/json')->withStringBody(json_encode(['error' => true]));
     }
 }

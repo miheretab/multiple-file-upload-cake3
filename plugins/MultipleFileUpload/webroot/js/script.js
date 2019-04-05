@@ -124,6 +124,13 @@
 						form.classList.add( data.success == true ? 'is-success' : 'is-error' );
 						if( !data.success ) {errorMsg.textContent = data.error.join("<br>");}
 						else {errorMsg.textContent = data.message;}
+						$.ajax({
+							url: base + 'files/view/' + data.projectId,
+							method: 'GET',
+							success: function(filesHtml) {
+								$('#files').html(filesHtml);
+							}
+						});
 					}
 					else alert( 'Error. Please, contact the webmaster!' );
 				};
