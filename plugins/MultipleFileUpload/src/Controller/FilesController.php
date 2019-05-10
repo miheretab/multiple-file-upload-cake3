@@ -4,6 +4,7 @@ namespace MultipleFileUpload\Controller;
 
 use MultipleFileUpload\Controller\AppController;
 use Cake\Filesystem\Folder;
+use Cake\Event\Event;
 
 class FilesController extends AppController
 {
@@ -11,6 +12,14 @@ class FilesController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
+		$this->loadComponent('Security');
+    }
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->Security->setConfig('unlockedActions', ['upload', 'download', 'remove']);
     }
 
     public function view($projectId) {
@@ -24,8 +33,8 @@ class FilesController extends AppController
 
     public function upload($projectId) {
 		$this->autoRender = false;
-		$this->loadModel('App.Projects');
-		if ($project = $this->Projects->get($projectId) && $this->request->is(['patch', 'post', 'put'])) {
+		//$this->loadModel('App.Projects');
+		if ($project = $this->Files->Projects->get($projectId) && $this->request->is(['patch', 'post', 'put'])) {
 			$errors = [];
 			$maxFileSize = env('FILE_MAX_SIZE_MB', 1) * 1024 * 1024;
 			foreach($this->request->data['files'] as $i => $file) {
